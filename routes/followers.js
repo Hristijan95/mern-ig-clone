@@ -87,10 +87,55 @@ router.put('/:id', auth, async (req, res) => {
     followerObject.approved = true;
     await followerObject.save();
 
-    await User.findByIdAndUpdate(followerObject.follower, {$inc: {following: 1}}, {new: false});
-    await User.findByIdAndUpdate(followerObject.followed, {$inc: {followers: 1}}, {new: false});
+    await User.findByIdAndUpdate(
+      followerObject.follower,
+      { $inc: { following: 1 } },
+      { new: false }
+    );
+    await User.findByIdAndUpdate(
+      followerObject.followed,
+      { $inc: { followers: 1 } },
+      { new: false }
+    );
 
     res.json(followerObject);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
+});
+
+/**
+ * @route   DELETE api/followers/:id
+ * @desc    Unfollow User
+ * @access  PRIVATE
+ */
+
+router.delete('/:id', auth, async (req, res) => {
+  if (!req.params.id) {
+    return res.status(400).json({ msg: 'id must be sent in request params' });
+  }
+
+  try {
+    const followerObject = await Follower.findOne({ _id: req.params.id });
+
+    if (!followerObject) {
+      return res.status(400).json({ msg: 'Follow request not found' });
+    }
+
+    await User.findByIdAndUpdate(
+      followerObject.follower,
+      { $inc: { following: -1 } },
+      { new: false }
+    );
+    await User.findByIdAndUpdate(
+      followerObject.followed,
+      { $inc: { followers: -1 } },
+      { new: false }
+    );
+
+    await followerObject.remove();
+    res.json({ msg: 'Unfollowed' });
   } catch (err) {
     console.error(err);
     res.status(500).send('Server Error');
