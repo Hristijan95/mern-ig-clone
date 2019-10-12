@@ -1,0 +1,4 @@
+{
+    "mongoURI": "mongodb+srv://kiko:kiko123@ig-clone-cluster-arbwh.mongodb.net/test?retryWrites=true&w=majority",
+    "jwtSecret": "hristijan123"
+}
