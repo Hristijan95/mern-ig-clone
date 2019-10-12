@@ -17,6 +17,18 @@ const UserSchema = mongoose.Schema({
   password: {
     type: String,
     required: true
+  },
+  followers: {
+    type: Number
+  },
+  following: {
+    type: Number
+  },
+  private: {
+    type: Boolean
+  },
+  numberOfPosts: {
+    type: Number
   }
 });
 

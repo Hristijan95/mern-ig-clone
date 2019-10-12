@@ -42,7 +42,16 @@ router.post(
         return res.status(400).json({ msg: 'User already exists' });
       }
 
-      user = new User({ firstName, lastName, email, password });
+      user = new User({
+        firstName,
+        lastName,
+        email,
+        password,
+        followers: 0,
+        following: 0,
+        private: true,
+        numberOfPosts: 0
+      });
 
       const salt = await bcrypt.genSalt(10);
 
