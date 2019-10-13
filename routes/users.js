@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const config = require('config');
 const { check, validationResult } = require('express-validator');
+const auth = require('../middleware/auth');
 
 /**
  * @route   POST api/users
@@ -80,5 +81,17 @@ router.post(
     }
   }
 );
+
+router.get('/:searchQuery', auth, async (req, res) => {
+  try {
+    const users = await User.find({
+      $text: { $search: req.params.searchQuery }
+    }).select('-password');
+    res.json(users);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+});
 
 module.exports = router;
